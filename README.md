@@ -300,23 +300,3 @@ $ docker run --rm -it --device=/dev/dri -v `pwd`:/workdir \
     -f mp4 \
     AB1_h264_qsv.mp4
 ```
-
-# Nonfree codecs
-
-If you want to use a non-free codec(e.g. `fdk-aac`, `libnpp` ), you can generate a binary in the current directory by executing the following command.
-
-**Generated binaries cannot be redistributed due to licensing issues. Please use them for your own use only.**
-
-```powershell
-# for windows build
-> $Env:CUDA_SDK_VERSION = "11.6.0"
-> $Env:NVIDIA_DRIVER_VERSION = "511.23"
-> curl -L -o cuda_${Env:CUDA_SDK_VERSION}_${Env:NVIDIA_DRIVER_VERSION}_windows.exe https://developer.download.nvidia.com/compute/cuda/${Env:CUDA_SDK_VERSION}/local_installers/cuda_${Env:CUDA_SDK_VERSION}_${Env:NVIDIA_DRIVER_VERSION}_windows.exe
-> docker buildx build --build-arg HOST_TARGET=x86_64-w64-mingw32 --build-arg TARGET_OS=windows --build-arg CUDA_SDK_VERSION=${Env:CUDA_SDK_VERSION} --build-arg NVIDIA_DRIVER_VERSION=${Env:NVIDIA_DRIVER_VERSION} --output type=local,dest=build -t ffmpeg-nonfree:windows -f ./nonfree.Dockerfile .
-```
-
-```bash
-# for linux build
-$ touch cuda_11.6.0_511.23_windows.exe # dummy file
-$ docker buildx build --output type=local,dest=build -t ffmpeg-nonfree:linux -f ./nonfree.Dockerfile .
-```
