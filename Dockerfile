@@ -1,7 +1,8 @@
-FROM ghcr.io/hiway-media/nvenc-docker:latest
-LABEL org.opencontainers.image.authors="allan.nava@hiway.media"
+FROM nvidia/cuda:11.5.0-base-ubuntu20.04
 #
-RUN apt update
-RUN apt-get install -y imagemagick
+WORKDIR /workspace
+COPY . .
+RUN ./ffmpeg-compile.sh
 #
-CMD ["/bin/bash"]
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
