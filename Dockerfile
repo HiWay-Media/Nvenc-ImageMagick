@@ -1,38 +1,89 @@
-FROM debian:buster-slim
+FROM debian:11 AS builder
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        git build-essential yasm cmake libtool libc6 libc6-dev unzip wget libnuma1 libnuma-dev && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+## Prepare
+RUN apt-get update
+RUN apt-get install -y \
+    curl diffutils file coreutils m4 xz-utils nasm python3 python3-pip appstream
 
-# Clone and install ffnvcodec
-RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git && \
-    cd nv-codec-headers && \
-    make && \
-    make install && \
-    cd .. && \
-    rm -rf nv-codec-headers
+## Install dependencies
+RUN apt-get install -y \
+    autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig1-dev libfreetype6-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libnuma-dev libogg-dev libopus-dev libsamplerate-dev libspeex-dev libtheora-dev libtool libtool-bin libturbojpeg0-dev libvorbis-dev libx264-dev libxml2-dev libvpx-dev m4 make nasm ninja-build patch pkg-config python tar zlib1g-dev autopoint imagemagick gsfonts
+    
+## Intel CSV dependencies
+RUN apt-get install -y libva-dev libdrm-dev
+    
+## GTK GUI dependencies
+RUN apt-get install -y \ 
+    intltool libayatana-appindicator-dev libdbus-glib-1-dev libglib2.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgtk-3-dev libgudev-1.0-dev libnotify-dev libwebkit2gtk-4.0-dev
+
+RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
+	&& cd nv-codec-headers \
+	&& make \
+	&& make install
+
+RUN git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+
+# Configure and build ffmpeg with nvenc support
+RUN cd ffmpeg \
+ && ./configure --enable-nonfree --enable-nvenc && make install \
+ && cd ..
 
 WORKDIR /tmp
 
-# Clone FFmpeg repository
-RUN git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+## Runtime dependencies
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
+    # For optical drive listing:
+    lsscsi \
+    # For watchfolder
+    bash \
+    coreutils \
+    yad \
+    findutils \
+    expect \
+    tcl8.6 \
+    wget \
+    git
+    
+## Handbrake dependencies
+RUN apt-get install -y \
+    libass9 \
+    libavcodec-extra58 \
+    libavfilter-extra7 \
+    libavformat58 \
+    libavutil56 \
+    libbluray2 \
+    libc6 \
+    libcairo2 \
+    libdvdnav4 \
+    libdvdread8 \
+    libgdk-pixbuf2.0-0 \
+    libglib2.0-0 \
+    libgstreamer-plugins-base1.0-0 \
+    libgstreamer1.0-0 \
+    libgtk-3-0 \
+    libgudev-1.0-0 \
+    libjansson4 \
+    libpango-1.0-0 \
+    libsamplerate0 \
+    libswresample3 \
+    libswscale5 \
+    libtheora0 \
+    libvorbis0a \
+    libvorbisenc2 \
+    libx264-160 \
+    libx265-192 \
+    libxml2 \
+    libturbojpeg0
 
-# Configure and build FFmpeg with GPU acceleration
-RUN cd ffmpeg && \
-    ./configure --enable-nonfree --enable-cuda-nvcc --enable-libnpp --extra-cflags=-I/usr/local/cuda/include --extra-ldflags=-L/usr/local/cuda/lib64 --disable-static --enable-shared && \
-    make -j8 && \
-    make install && \
-    cd .. && \
-    rm -rf ffmpeg
 
-# Install ImageMagick and necessary libraries
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        imagemagick libmagickwand-dev libfreetype6-dev gsfonts && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+## Cleanup
+RUN rm -rf docker-handbrake
+RUN apt-get remove wget git -y && \
+    apt-get autoremove -y && \
+    apt-get autoclean -y && \
+    apt-get clean -y && \
+    apt-get purge -y && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Set the container's default command to a shell prompt
 CMD ["/bin/bash"]
