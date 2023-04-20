@@ -35,7 +35,7 @@ apt-get install -y \
     p7zip \
     pkg-config \
     subversion \
-    yasm
+    yasm \
     imagemagick
 EOT
 
