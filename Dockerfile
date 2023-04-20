@@ -7,7 +7,7 @@ RUN apt-get install -y \
 
 ## Install dependencies
 RUN apt-get install -y \
-    autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig1-dev libfreetype6-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libnuma-dev libogg-dev libopus-dev libsamplerate-dev libspeex-dev libtheora-dev libtool libtool-bin libturbojpeg0-dev libvorbis-dev libx264-dev libxml2-dev libvpx-dev m4 make nasm ninja-build patch pkg-config python tar zlib1g-dev autopoint imagemagick gsfonts
+    autoconf automake build-essential cmake git libass-dev libbz2-dev libfontconfig1-dev libfreetype6-dev libfribidi-dev libharfbuzz-dev libjansson-dev liblzma-dev libmp3lame-dev libnuma-dev libogg-dev libopus-dev libsamplerate-dev libspeex-dev libtheora-dev libtool libtool-bin libturbojpeg0-dev libvorbis-dev libx264-dev libxml2-dev libvpx-dev m4 make nasm ninja-build patch pkg-config python tar zlib1g-dev autopoint imagemagick gsfonts wget
     
 ## Intel CSV dependencies
 RUN apt-get install -y libva-dev libdrm-dev
@@ -21,11 +21,14 @@ RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
 	&& make \
 	&& make install
 
-RUN git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+RUN wget https://ffmpeg.org/releases/ffmpeg-5.1.2.tar.xz \
+ && tar -xf ffmpeg-5.1.2.tar.xz \
+ && rm ffmpeg-5.1.2.tar.xz
 
 # Configure and build ffmpeg with nvenc support
-RUN cd ffmpeg \
- && ./configure --enable-nonfree --enable-nvenc && make install \
+RUN cd ffmpeg-5.1.2 \
+ && ./configure --enable-nonfree --enable-nvenc --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg \
+ && make install \
  && cd ..
 
 WORKDIR /tmp
