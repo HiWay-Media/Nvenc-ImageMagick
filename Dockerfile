@@ -27,7 +27,7 @@ RUN wget https://ffmpeg.org/releases/ffmpeg-5.1.2.tar.xz \
 
 # Configure and build ffmpeg with nvenc support
 RUN cd ffmpeg-5.1.2 \
- && ./configure --enable-nonfree --enable-nvenc --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc --enable-fontconfig --enable-frei0r --enable-gnutls --enable-gmp --enable-libgme --enable-gray --enable-libaom --enable-libfribidi --enable-libass --enable-libvmaf --enable-libfreetype --enable-libmp3lame --enable-libopencore-amrnb --enable-libopencore-amrwb --enable-libopenjpeg --enable-librubberband --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libvorbis --enable-libopus --enable-libtheora --enable-libvidstab --enable-libvo-amrwbenc --enable-libvpx --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxml2 --enable-libdav1d --enable-libxvid --enable-libzvbi --enable-libzimg \
+ && ./configure --enable-nonfree --enable-nvenc --enable-gpl --enable-version3 --enable-static --disable-debug --disable-ffplay --disable-indev=sndio --disable-outdev=sndio --cc=gcc --enable-fontconfig --enable-gray --enable-libmp3lame --enable-libopus --enable-libvpx --enable-libx264  \
  && make install \
  && cd ..
 
