@@ -1,28 +1,38 @@
-FROM alpine:latest
+FROM debian:buster-slim
 
-RUN apk add --no-cache build-base git yasm nasm tar xz \
- && apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/main imagemagick-dev
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        git build-essential yasm cmake libtool libc6 libc6-dev unzip wget libnuma1 libnuma-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Clone and install ffnvcodec
+RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git && \
+    cd nv-codec-headers && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf nv-codec-headers
 
 WORKDIR /tmp
 
-# Download and extract ffmpeg
-RUN wget https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz \
- && tar -xf ffmpeg-6.0.tar.xz \
- && rm ffmpeg-6.0.tar.xz
+# Clone FFmpeg repository
+RUN git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
 
-# Download and build nv-codec-headers
-RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
- && cd nv-codec-headers \
- && make \
- && make install \
- && cd .. \
- && rm -rf nv-codec-headers
+# Configure and build FFmpeg with GPU acceleration
+RUN cd ffmpeg && \
+    ./configure --enable-nonfree --enable-cuda-nvcc --enable-libnpp --extra-cflags=-I/usr/local/cuda/include --extra-ldflags=-L/usr/local/cuda/lib64 --disable-static --enable-shared && \
+    make -j8 && \
+    make install && \
+    cd .. && \
+    rm -rf ffmpeg
 
-# Configure and build ffmpeg with nvenc support
-RUN cd ffmpeg-6.0 \
- && ./configure --enable-nvenc \
- && make \
- && cd .. \
- && rm -rf ffmpeg-6.0
+# Install ImageMagick and necessary libraries
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        imagemagick libmagickwand-dev libfreetype6-dev gsfonts && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
+# Set the container's default command to a shell prompt
 CMD ["/bin/bash"]
