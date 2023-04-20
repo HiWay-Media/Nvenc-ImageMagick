@@ -22,7 +22,6 @@ RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
 RUN cd ffmpeg-6.0 \
  && ./configure --enable-nvenc \
  && make \
- && make install \
  && cd .. \
  && rm -rf ffmpeg-6.0
 
