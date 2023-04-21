@@ -1,4 +1,8 @@
-FROM debian:10 AS builder
+# syntax=docker/dockerfile:1
+FROM debian:10.10-slim
+#
+MAINTAINER allan.nava@hiway.media
+#AS builder
 #
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES all
@@ -90,73 +94,80 @@ RUN apt-get remove wget git -y && \
     apt-get purge -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 #
-#CMD ["/bin/bash"]
+CMD ["/bin/bash"]
+##
+#
+#
+#
+#
 ######################################################################
 ## Pull base image
-FROM debian:buster-slim
+#FROM debian:buster-slim
 #
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES all
-ENV DEBIAN_FRONTEND noninterac1tive
+#ENV NVIDIA_VISIBLE_DEVICES all
+#ENV NVIDIA_DRIVER_CAPABILITIES all
+#ENV DEBIAN_FRONTEND noninterac1tive
+##
+### Runtime dependencies
+#RUN apt-get update
+#RUN apt-get install -y --no-install-recommends \
+#    # For optical drive listing:
+#    lsscsi \
+#    # For watchfolder
+#    bash \
+#    coreutils \
+#    yad \
+#    findutils \
+#    expect \
+#    tcl8.6 \
+#    wget \
+#    git
+##
+### Docker dependencies
+#RUN apt-get install -y \
+#    libass9 \
+#    libavcodec-extra58 \
+#    libavfilter-extra7 \
+#    libavformat58 \
+#    libavutil56 \
+#    libbluray2 \
+#    libc6 \
+#    libcairo2 \
+#    libdvdnav4 \
+#    libgdk-pixbuf2.0-0 \
+#    libglib2.0-0 \
+#    libgstreamer-plugins-base1.0-0 \
+#    libgstreamer1.0-0 \
+#    libgtk-3-0 \
+#    libgudev-1.0-0 \
+#    libjansson4 \
+#    libpango-1.0-0 \
+#    libsamplerate0 \
+#    libswresample3 \
+#    libswscale5 \
+#    libtheora0 \
+#    libvorbis0a \
+#    libvorbisenc2 \
+#    libxml2 \
+#    libturbojpeg0 \
+#    libdvdread4 \
+#    libx264-155 \
+#    libtool \
+#    libtool-bin \
+#    imagemagick 
+##
+### Cleanup
+#RUN apt-get remove wget git -y && \
+#    apt-get autoremove -y && \
+#    apt-get autoclean -y && \
+#    apt-get clean -y && \
+#    apt-get purge -y && \
+#    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+##
+## Copy ffmpeg, ffprobe, imagemagick from base build image
+#COPY --from=builder /usr/local /usr/local
+#COPY --from=builder /usr/bin /usr/bin
+#COPY --from=builder /opt /opt
 #
-## Runtime dependencies
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
-    # For optical drive listing:
-    lsscsi \
-    # For watchfolder
-    bash \
-    coreutils \
-    yad \
-    findutils \
-    expect \
-    tcl8.6 \
-    wget \
-    git
-#
-## Docker dependencies
-RUN apt-get install -y \
-    libass9 \
-    libavcodec-extra58 \
-    libavfilter-extra7 \
-    libavformat58 \
-    libavutil56 \
-    libbluray2 \
-    libc6 \
-    libcairo2 \
-    libdvdnav4 \
-    libgdk-pixbuf2.0-0 \
-    libglib2.0-0 \
-    libgstreamer-plugins-base1.0-0 \
-    libgstreamer1.0-0 \
-    libgtk-3-0 \
-    libgudev-1.0-0 \
-    libjansson4 \
-    libpango-1.0-0 \
-    libsamplerate0 \
-    libswresample3 \
-    libswscale5 \
-    libtheora0 \
-    libvorbis0a \
-    libvorbisenc2 \
-    libxml2 \
-    libturbojpeg0 \
-    libdvdread4 \
-    libx264-155 \
-    imagemagick 
-#
-## Cleanup
-RUN apt-get remove wget git -y && \
-    apt-get autoremove -y && \
-    apt-get autoclean -y && \
-    apt-get clean -y && \
-    apt-get purge -y && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-#
-# Copy ffmpeg, ffprobe, imagemagick from base build image
-COPY --from=builder /usr/local /usr/local
-COPY --from=builder /usr/bin /usr/bin
-COPY --from=builder /opt /opt
-#
-CMD ["/bin/bash"]
+#CMD ["/bin/bash"]
 #
