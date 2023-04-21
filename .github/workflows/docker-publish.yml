@@ -2,9 +2,9 @@ name: Dockerimage with Dockerfile
 #
 on:
   push:
-    branches: 
-      - master
-      - main
+    #branches: 
+    #  - master
+    #  - main
     tags:
       - '*'
 #
