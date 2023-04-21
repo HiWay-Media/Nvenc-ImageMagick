@@ -143,7 +143,7 @@ RUN apt-get install -y \
     libturbojpeg0 \
     libdvdread4 \
     libx264-155 \
-    libx265-165 
+    imagemagick 
 #
 ## Cleanup
 RUN apt-get remove wget git -y && \
