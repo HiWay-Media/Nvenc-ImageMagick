@@ -4,6 +4,8 @@ FROM debian:10.10-slim
 MAINTAINER allan.nava@hiway.media
 #AS builder
 #
+WORKDIR /app
+#
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES all
 ENV DEBIAN_FRONTEND noninterac1tive
@@ -38,7 +40,6 @@ RUN cd ffmpeg-5.1.2 \
  && make install \
  && cd ..
 
-WORKDIR /tmp
 
 ## Runtime dependencies
 RUN apt-get update
