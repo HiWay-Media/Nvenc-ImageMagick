@@ -15,8 +15,8 @@ RUN apt-get install -y libva-dev libdrm-dev
 ## GTK GUI dependencies
 RUN apt-get install -y \ 
     intltool libayatana-appindicator-dev libdbus-glib-1-dev libglib2.0-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgtk-3-dev libgudev-1.0-dev libnotify-dev libwebkit2gtk-4.0-dev
-
-RUN git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git \
+#
+RUN git clone -b sdk/11.0 https://github.com/FFmpeg/nv-codec-headers.git \
 	&& cd nv-codec-headers \
 	&& make \
 	&& make install
@@ -48,7 +48,7 @@ RUN apt-get install -y --no-install-recommends \
     wget \
     git
     
-## Handbrake dependencies
+## Docker dependencies
 RUN apt-get install -y \
     libass9 \
     libavcodec-extra58 \
@@ -59,7 +59,6 @@ RUN apt-get install -y \
     libc6 \
     libcairo2 \
     libdvdnav4 \
-    libdvdread8 \
     libgdk-pixbuf2.0-0 \
     libglib2.0-0 \
     libgstreamer-plugins-base1.0-0 \
@@ -74,12 +73,12 @@ RUN apt-get install -y \
     libtheora0 \
     libvorbis0a \
     libvorbisenc2 \
-    libx264-160 \
-    libx265-192 \
     libxml2 \
-    libturbojpeg0
-
-
+    libturbojpeg0 \
+    libdvdread4 \
+    libx264-155 \
+    libx265-165 
+#
 ## Cleanup
 RUN apt-get remove wget git -y && \
     apt-get autoremove -y && \
@@ -87,5 +86,5 @@ RUN apt-get remove wget git -y && \
     apt-get clean -y && \
     apt-get purge -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
+#
 CMD ["/bin/bash"]
