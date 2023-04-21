@@ -93,7 +93,7 @@ RUN apt-get remove wget git -y && \
 #CMD ["/bin/bash"]
 ######################################################################
 ## Pull base image
-FROM debian-slim:10
+FROM debian:buster-slim
 #
 ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES all
