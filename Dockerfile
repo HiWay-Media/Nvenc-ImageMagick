@@ -81,7 +81,6 @@ RUN apt-get install -y \
 
 
 ## Cleanup
-RUN rm -rf docker-handbrake
 RUN apt-get remove wget git -y && \
     apt-get autoremove -y && \
     apt-get autoclean -y && \
