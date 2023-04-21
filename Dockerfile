@@ -1,4 +1,4 @@
-FROM debian:11 AS builder
+FROM debian:10 AS builder
 
 ## Prepare
 RUN apt-get update
@@ -87,4 +87,10 @@ RUN apt-get remove wget git -y && \
     apt-get purge -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 #
+#CMD ["/bin/bash"]
+######################################################################
+## Pull base image
+FROM debian-slim:10
+# Copy ffmpeg, ffprobe, imagemagick from base build image
+COPY --from=builder /usr/local /usr
 CMD ["/bin/bash"]
