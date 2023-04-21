@@ -99,7 +99,7 @@ ENV NVIDIA_VISIBLE_DEVICES all
 ENV NVIDIA_DRIVER_CAPABILITIES all
 ENV DEBIAN_FRONTEND noninterac1tive
 # Copy ffmpeg, ffprobe, imagemagick from base build image
-COPY --from=builder /usr/local /usr
+COPY --from=builder /usr/local /usr/local
 COPY --from=builder /usr/bin /usr/bin
 COPY --from=builder /opt /opt
 #
