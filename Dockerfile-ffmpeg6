@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM debian:11 
+FROM debian:11 as builder
 #AS builder
 MAINTAINER Allan-Nava
 #
@@ -113,9 +113,12 @@ RUN apt-get remove wget git -y && \
 #RUN echo "Compiled ffmpeg nvenc..."
 #
 ######################################################################
-#
 ## Pull base image
 FROM debian-slim:10
+#
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES all
+ENV DEBIAN_FRONTEND noninterac1tive
 # Copy ffmpeg, ffprobe, imagemagick from base build image
 COPY --from=builder /usr/local /usr
 CMD ["/bin/bash"]

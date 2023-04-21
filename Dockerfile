@@ -1,5 +1,8 @@
 FROM debian:10 AS builder
-
+#
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES all
+ENV DEBIAN_FRONTEND noninterac1tive
 ## Prepare
 RUN apt-get update
 RUN apt-get install -y \
@@ -91,6 +94,11 @@ RUN apt-get remove wget git -y && \
 ######################################################################
 ## Pull base image
 FROM debian-slim:10
+#
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES all
+ENV DEBIAN_FRONTEND noninterac1tive
 # Copy ffmpeg, ffprobe, imagemagick from base build image
 COPY --from=builder /usr/local /usr
 CMD ["/bin/bash"]
+#
